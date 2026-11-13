@@ -79,22 +79,22 @@ export const SCENARIOS = [
     },
   },
   {
-    id: "leftturn", cat: "left", title: "좌회전 — 맞은편 우회전 차에 양보", place: "Dominion Rd × Balmoral Rd 느낌의 교차로",
-    brief: "교차로에서 왼쪽(Balmoral Rd)으로 좌회전하세요. 맞은편 차가 오른쪽 깜빡이를 켜고 같은 길로 들어오려 해요.",
-    tips: ["좌회전(짧게 도는 쪽) 차는 맞은편 우회전 차에 양보 — 2012년부터 바뀐 규칙", "좌회전은 가까운 왼쪽 차선으로 짧게", "깜빡이 3초 전"],
+    id: "leftturn", cat: "left", title: "우회전 — 맞은편 좌회전 차에 양보", place: "Dominion Rd × Balmoral Rd 느낌의 교차로",
+    brief: "교차로에서 오른쪽(Balmoral Rd)으로 우회전하세요. 맞은편 차가 왼쪽 깜빡이를 켜고 같은 길로 들어가려 해요.",
+    tips: ["2012년부터: 우회전 차는 맞은편에서 좌회전하는 차에 양보", "회전하는 차는 직진하는 차에 양보", "우회전은 크게 돌아 새 길의 왼쪽 차선으로, 깜빡이 3초 전"],
     limit: 50, link: LINK.give, map: cross("Dominion Rd", "Balmoral Rd"),
     agents: () => [
-      { kind: "car", v: 12.5, trigger: 150, color: "#16a085", ind: "R", path: new PB(1.75, -60).line(1.75, -3.5).mark("a").arc(-3.5, -3.5, 5.25, 0, Math.PI / 2).line(-170, 1.75).done() },
-      { kind: "car", v: 12, trigger: 0, delay: 0.5, color: "#7f8c8d", path: new PB(-170, -1.75).line(170, -1.75).done() },
+      { kind: "car", v: 8.5, trigger: 150, color: "#16a085", ind: "L", path: new PB(1.75, -48).line(1.75, -3.5).mark("a").arc(3.5, -3.5, 1.75, Math.PI, Math.PI / 2).line(170, -1.75).done() },
+      { kind: "car", v: 12, trigger: 0, delay: 0.5, color: "#7f8c8d", path: new PB(170, 1.75).line(-170, 1.75).done() },
     ],
     make() {
-      const p = new PB(-1.75, 200).line(-1.75, 3.5).mark("turn").arc(-3.5, 3.5, 1.75, 0, -Math.PI / 2).line(-150, 1.75).done(), t = p.marks.turn;
+      const p = new PB(-1.75, 200).line(-1.75, 3.5).mark("turn").arc(3.5, 3.5, 5.25, Math.PI, 1.5 * Math.PI).line(150, -1.75).done(), t = p.marks.turn;
       return {
         path: p, signs: [sg("speed", 10, { n: 50 }), sg("lights", 120)],
         rules: [
           { type: "speed", s0: 0, s1: p.len, limit: 50 },
-          { type: "signal", s: t, dir: "L", why: "좌회전 3초 전부터 왼쪽 깜빡이(키보드 ←, 화면 ◀)." },
-          { type: "yield", s0: t - 0.5, s1: t + 5, agent: 0, a0: 58, a1: 70, secs: 2.5, why: "뉴질랜드 규칙: 좌회전하는 차는 맞은편에서 우회전하는 차에 양보해요. 둘이 같은 길로 들어가니, 우회전 차가 먼저 들어간 뒤 따라 들어가세요." },
+          { type: "signal", s: t, dir: "R", why: "우회전 3초 전부터 오른쪽 깜빡이(키보드 →, 화면 ▶)." },
+          { type: "yield", s0: t, s1: t + 7, agent: 0, a0: 44, a1: 52, secs: 3, why: "뉴질랜드 규칙(2012년 개정): 우회전하는 차는 맞은편에서 좌회전하는 차에 양보해요. 둘이 같은 길로 들어가니 좌회전 차가 먼저 들어간 뒤 따라가세요." },
         ],
       };
     },

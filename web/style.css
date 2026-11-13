@@ -55,6 +55,7 @@ footer { margin-top: 20px; }
 .speedo { background: rgba(15,20,28,.82); color: #fff; padding: 6px 10px; border-radius: 10px; text-align: center; min-width: 64px; } .speedo b { display: block; font-size: 1.6rem; line-height: 1; } .speedo small { font-size: .68rem; opacity: .8; }
 .speedo.over { background: rgba(192,38,45,.92); }
 .limit { background: rgba(255,255,255,.85); border-radius: 50%; padding: 2px; line-height: 0; }
+.limit:empty { display: none; }
 .hinfo { background: rgba(15,20,28,.72); color: #fff; padding: 5px 9px; border-radius: 10px; font-size: .8rem; font-weight: 600; } .hinfo:empty { display: none; }
 .blink { color: #22e06b; animation: bl .8s steps(2) infinite; } @keyframes bl { 50% { opacity: .2; } }
 .toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: rgba(21,128,61,.95); color: #fff; padding: 8px 14px; border-radius: 10px; font-weight: 600; max-width: 90%; font-size: .9rem; }
@@ -80,3 +81,29 @@ h3.bad, p.bad b { color: var(--bad); } h3.warn { color: var(--warn); } p.good b 
 .quiz { max-width: 620px; margin: 0 auto; } .qtop { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
 .qsign { display: flex; justify-content: center; padding: 18px; background: color-mix(in oklab, var(--accent) 6%, var(--surface)); border-radius: var(--r); margin-bottom: 12px; }
 .qreview { display: grid; gap: 10px; margin: 10px 0; } .qr { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: center; } .qr p { margin: 2px 0 0; }
+
+/* ---------- v2: 보조 조작·트랙·시험·이론 ---------- */
+.ctrls2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.sb { font: inherit; font-weight: 700; font-size: .86rem; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-height: 44px; padding: 4px 12px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; touch-action: manipulation; }
+.sb small { font-size: .66rem; color: var(--muted); font-weight: 600; }
+.sb.on { outline: 3px solid var(--accent); background: color-mix(in oklab, var(--accent) 14%, var(--surface)); }
+.sb.obs { background: color-mix(in oklab, #ffcc4d 22%, var(--surface)); } .sb.haz { background: color-mix(in oklab, var(--bad) 18%, var(--surface)); } .sb.done { background: color-mix(in oklab, var(--good) 18%, var(--surface)); }
+.say { display: flex; gap: 10px; align-items: flex-start; background: color-mix(in oklab, var(--accent) 8%, var(--surface)); border-radius: 10px; padding: 8px 10px; margin: 8px 0; }
+.say div { display: flex; flex-direction: column; } .say b { font-size: 1rem; }
+.btn.sm { min-height: 34px; padding: 4px 8px; }
+.big-ico { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; font-size: 1.7rem; border-radius: 12px; background: color-mix(in oklab, var(--accent) 10%, var(--surface)); }
+.tile.ready { border-color: var(--accent); } .tile.ready b { color: var(--accent); }
+.tiles.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.narrow { max-width: 760px; margin: 0 auto; } .narrow h3 { margin-top: 16px; }
+.tag { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 6px; border-radius: 6px; } .tag.IFE { background: color-mix(in oklab, var(--bad) 16%, transparent); color: var(--bad); } .tag.CE { background: color-mix(in oklab, var(--warn) 16%, transparent); color: var(--warn); }
+.topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 8px; }
+.topic { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: inherit; background: var(--surface); }
+.topic:hover { border-color: var(--accent); }
+.qr2 { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+p.en { margin: -4px 0 8px; color: var(--muted); font-size: .92rem; }
+.btn.opt small { display: block; font-weight: 500; color: var(--muted); font-size: .8rem; }
+.btn.opt { flex-direction: column; align-items: flex-start; }
+.chk { display: inline-flex; gap: 6px; align-items: center; margin: 8px 0; }
+p.bad { color: var(--bad); } span.good { color: var(--good); font-weight: 600; }
+.stage.free { height: min(62vh, 600px); }
+@media (max-width: 640px) { .sb { flex: 1 1 22%; padding: 4px 6px; font-size: .8rem; } .tiles.three { grid-template-columns: minmax(0, 1fr); } }

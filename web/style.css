@@ -113,3 +113,24 @@ p.bad { color: var(--bad); } span.good { color: var(--good); font-weight: 600; }
 .phr li > div { display: flex; flex-direction: column; min-width: 0; }
 .phr-a { display: flex; gap: 6px; flex-shrink: 0; }
 .inp { flex: 1; min-width: 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line, #ccc); font: inherit; background: transparent; color: inherit; }
+/* 첫 사용자 시작 카드 */
+.start-card { display: grid; gap: 12px; padding: 18px; margin-bottom: 18px; border-radius: var(--r); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: var(--shadow); }
+.start-card h2 { margin: 4px 0 8px; font-size: 1.2rem; }
+.sc-ico { font-size: 1.8rem; }
+.sc-steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: .92rem; }
+.start-card .btn.big { justify-self: start; }
+/* 별은 완료한 코스만, 아직이면 '새 코스'·'다음' 표시 */
+.newtag { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 99px; background: var(--line); color: var(--muted); letter-spacing: 0; }
+/* 휴대폰: 코스 2열 격자(표지판 위·제목 아래) */
+@media (max-width: 600px) {
+  .mgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .mcard { grid-template-columns: 1fr; gap: 6px; padding: 10px; align-items: start; }
+  .mcard .msign { width: 44px; height: 44px; }
+  .mcard .msign svg, .mcard .msign > * { max-width: 44px; max-height: 44px; }
+  .mcard .mbody b { font-size: .88rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mcard .mbody .muted { font-size: .74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .mcard.done { border-left-width: 1px; border-top: 3px solid var(--good); }
+}
+.start-card .btn.big { font-size: 1rem; padding: 12px 18px; }
+@media (max-width: 600px) { .mcard .msign { overflow: hidden; } .mcard .big-ico { font-size: 1.4rem; line-height: 44px; white-space: nowrap; } }
+.newtag.next { background: var(--accent); color: var(--accent-ink); }

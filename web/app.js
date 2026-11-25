@@ -80,26 +80,33 @@ function itemCard(id) {
   if (id === "@quiz") return `<a class="mcard" href="#/quiz"><span class="msign">${signHTML("giveway")}</span><span class="mbody"><b>표지판 퀴즈</b><span class="muted">${QUIZ.length}개 표지판</span><span class="mstars">${S.quiz.best ? `최고 ${S.quiz.best}/${QUIZ.length}` : "아직 안 풂"}</span></span></a>`;
   if (id === "@convert") return `<a class="mcard" href="#/convert"><span class="msign"><span class="big-ico">🇰🇷→🇳🇿</span></span><span class="mbody"><b>한국 면허 → NZ 면허 전환 안내</b><span class="muted">면제 국가 조건·서류·절차</span><span class="mstars muted">읽을거리</span></span></a>`;
   const m = S.missions[id] || {}, [k, o] = ICON[id] || ["speed", { n: 50 }];
-  return `<a class="mcard${m.stars ? " done" : ""}" href="#/${isFree(id) ? "park" : "play"}/${id}"><span class="msign">${signHTML(k, o)}</span><span class="mbody"><b>${esc(titleOf(id))}</b><span class="muted">${esc(placeOf(id))}</span><span class="mstars">${starTxt(m.stars || 0)}${m.best != null ? ` <span class="muted">최고 ${m.best}점</span>` : ""}</span></span></a>`;
+  return `<a class="mcard${m.stars ? " done" : ""}" href="#/${isFree(id) ? "park" : "play"}/${id}"><span class="msign">${signHTML(k, o)}</span><span class="mbody"><b>${esc(titleOf(id))}</b><span class="muted">${esc(placeOf(id))}</span><span class="mstars">${m.stars ? starTxt(m.stars) : `<span class="newtag${id === NEXT_ID ? " next" : ""}">${id === NEXT_ID ? "다음 ▶" : "새 코스"}</span>`}${m.best != null ? ` <span class="muted">최고 ${m.best}점</span>` : ""}</span></span></a>`;
 }
 
 /* ================= 대시보드 ================= */
+let NEXT_ID = "";
 function dashboard() {
   const app = $("#app"), R = readiness(), vs = Object.entries(S.viol).sort((a, b) => b[1] - a[1]);
   const allIds = TRACKS.flatMap((t) => t.items).filter((x) => !x.startsWith("@")), done = allIds.filter((id) => S.missions[id]?.stars > 0).length;
   const next = allIds.find((id) => !(S.missions[id]?.stars > 0)) || allIds[0];
+  NEXT_ID = next;
+  const fresh = !S.hist.length && !done && !(S.theory.best || 0);   // 처음 쓰는 사람: 빈 숫자 타일 대신 시작 카드
   app.innerHTML = `
   <header class="hero">
     <div><h1>NZ Drive <span class="sub">오클랜드 운전 적응 · 면허 준비</span></h1>
     <p class="muted">한국 운전자를 위한 뉴질랜드 운전 연습: 도심 규칙, 고속도로·지방도로, 주차, 이론·위험 인지·모의 실기까지. 지도는 오클랜드 '느낌'의 가상 도로입니다.</p></div>
     <a class="btn primary" href="#/${isFree(next) ? "park" : "play"}/${next}">▶ ${S.hist.length ? "이어서" : "첫 연습"}: ${esc(titleOf(next))}</a>
   </header>
-  <section class="tiles">
+  ${fresh ? `<section class="start-card">
+    <div><span class="sc-ico" aria-hidden="true">🚗</span><h2>처음이세요? 5분 첫 연습부터</h2>
+    <ol class="sc-steps"><li><b>왼쪽 차선 지키며 우회전</b> — 좌측통행 감 잡기</li><li><b>로터리</b> — 오른쪽에서 오는 차에 양보</li><li><b>이론 모의고사</b> — 35문항 중 32개면 합격</li></ol></div>
+    <a class="btn primary big" href="#/${isFree(next) ? "park" : "play"}/${next}">▶ 첫 코스 시작</a>
+    <p class="muted small">연습하면 시험 준비도·약점이 여기에 쌓여요.</p></section>` : `  <section class="tiles">
     <div class="tile ready"><span class="tl">시험 준비도</span><b>${R.total}<small>/100</small></b><span class="bar"><i style="width:${R.total}%"></i></span><span class="muted small">${R.parts.map(([n, v]) => `${n} ${Math.round(v * 100)}%`).join(" · ")}</span></div>
     <div class="tile"><span class="tl">완료한 코스</span><b>${done}<small>/${allIds.length}</small></b><span class="bar"><i style="width:${(done / allIds.length) * 100}%"></i></span></div>
     <div class="tile"><span class="tl">이론 모의고사 최고</span><b>${S.theory.best || 0}<small>/35</small></b><span class="muted small">합격선 32</span></div>
     <div class="tile"><span class="tl">가장 자주 틀린 규칙</span><b class="sm">${vs[0] ? esc(VIOL[vs[0][0]]?.[0] || vs[0][0]) : "아직 없음"}</b><span class="muted">${vs[0] ? `${vs[0][1]}회` : "연습하면 약점이 쌓여요"}</span></div>
-  </section>
+  </section>`}
   ${TRACKS.map((t) => { const L = t.items.filter((x) => !x.startsWith("@")), st = L.reduce((a, id) => a + (S.missions[id]?.stars || 0), 0);
     return `<section class="cat"><div class="cathead"><h2>${t.icon} ${esc(t.name)}</h2><span class="muted">${esc(t.desc)}${L.length ? ` · 별 ${st}/${L.length * 3}` : ""}</span></div><div class="mgrid">${t.items.map(itemCard).join("")}</div></section>`; }).join("")}
   <section class="two">

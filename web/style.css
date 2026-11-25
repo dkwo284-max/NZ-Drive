@@ -107,3 +107,9 @@ p.en { margin: -4px 0 8px; color: var(--muted); font-size: .92rem; }
 p.bad { color: var(--bad); } span.good { color: var(--good); font-weight: 600; }
 .stage.free { height: min(62vh, 600px); }
 @media (max-width: 640px) { .sb { flex: 1 1 22%; padding: 4px 6px; font-size: .8rem; } .tiles.three { grid-template-columns: minmax(0, 1fr); } }
+/* 운전 영어 · 내 주변 장소 목록 */
+.phr { list-style: none; padding: 0; margin: 6px 0 10px; display: grid; gap: 6px; }
+.phr li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line, #ddd); border-radius: 10px; }
+.phr li > div { display: flex; flex-direction: column; min-width: 0; }
+.phr-a { display: flex; gap: 6px; flex-shrink: 0; }
+.inp { flex: 1; min-width: 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line, #ccc); font: inherit; background: transparent; color: inherit; }

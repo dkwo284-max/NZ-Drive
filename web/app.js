@@ -6,13 +6,14 @@ import { MANEUVERS, FreeGame, manById } from "./parking.js";
 import { QUIZ } from "./quiz.js";
 import { BANK, TOPICS } from "./theory.js";
 import { signHTML } from "./signs.js";
+import { schedulePush, pullMerge, syncCode, syncPanel, bindSync, englishPage, nearPage } from "./extras.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const SCN = [...S1, ...SCENARIOS2], byId = Object.fromEntries(SCN.map((s) => [s.id, s]));
 const KEY = "nzdrive.v1", EMPTY = () => ({ missions: {}, viol: {}, quiz: { best: 0, items: {} }, theory: { best: 0, items: {}, runs: 0 }, mock: { runs: 0, pass: 0, s1: 0, last: null }, hist: [], voice: true });
 const load = () => { try { const d = JSON.parse(localStorage.getItem(KEY) || "{}"), e = EMPTY(); return { ...e, ...d, theory: { ...e.theory, ...(d.theory || {}) }, mock: { ...e.mock, ...(d.mock || {}) } }; } catch { return EMPTY(); } };
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* 저장 불가 */ } };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* 저장 불가 */ } schedulePush(() => S); };   // 코드가 연결돼 있으면 서버에도
 let S = load();
 const starsOf = (ok, score, isa) => (!ok ? 0 : Math.min(isa ? 2 : 3, score >= 100 ? 3 : score >= 85 ? 2 : 1));
 const starTxt = (n) => "★".repeat(n) + "☆".repeat(3 - n);
@@ -112,6 +113,12 @@ function dashboard() {
       <li><b>⚠ 위험 H</b>: 위험 인지 코스에서 · 주차 코스: <b>핸들 ← →</b>, <b>기어 G</b>, <b>완료 Enter</b></li>
       <li>정지·양보·보행자는 크루즈 중에도 <b>직접 브레이크</b></li></ul></div>
   </section>
+  <section class="two">
+    <div class="panel"><h2>🧭 실제 도로로 넘어가기</h2><ul class="tips">
+      <li><a href="#/near"><b>📍 내 주변 실제 연습 장소</b></a> — 진짜 지도(OSM)에서 가까운 로터리·철도 건널목·횡단보도·1차선 다리를 찾고, 먼저 할 코스와 연결</li>
+      <li><a href="#/english"><b>🗣 운전할 때 쓰는 영어</b></a> — 경찰 단속·주유소·주차·정비·사고 표현 듣기, English Trainer 복습으로 보내기</li></ul></div>
+    ${syncPanel()}
+  </section>
   <section class="panel">
     <h2>🇰🇷 → 🇳🇿 꼭 바꿔야 할 습관</h2>
     <div class="tbl"><table><thead><tr><th>상황</th><th>한국</th><th>뉴질랜드</th></tr></thead><tbody>
@@ -128,8 +135,9 @@ function dashboard() {
     </tbody></table></div>
     <p class="muted small">요약 정보예요. 실제 운전·시험은 <a href="https://nzta.govt.nz/roadcode/general-road-code" target="_blank" rel="noopener">NZTA 공식 Road Code</a>가 기준입니다.</p>
   </section>
-  <footer class="muted small">진도는 이 브라우저에만 저장돼요. 지도·도로명은 연습용 가상 배치, 표지판은 실제 모양을 단순화한 그림, 시험 채점은 단순화한 연습용이에요.</footer>`;
+  <footer class="muted small">진도는 이 브라우저에 저장돼요(☁️ 코드를 연결하면 다른 기기와 이어짐). 지도·도로명은 연습용 가상 배치, 표지판은 실제 모양을 단순화한 그림, 시험 채점은 단순화한 연습용이에요.</footer>`;
   $("#reset")?.addEventListener("click", () => { if (confirm("연습 기록을 모두 지울까요?")) { S = EMPTY(); save(); dashboard(); } });
+  bindSync(() => S, (m) => { S = { ...EMPTY(), ...m }; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* 무시 */ } }, () => dashboard());
 }
 
 /* ================= 공통 플레이 화면 ================= */
@@ -385,6 +393,8 @@ function route(again) {
   if (h === "#/quiz") return quiz();
   if (h === "#/mock") return mockIntro();
   if (h === "#/convert") return convert();
+  if (h === "#/english") return englishPage();
+  if (h === "#/near") return nearPage(titleOf);
   if (h === "#/theory") return theoryHome();
   if (h === "#/theory/mock") return theoryRun("mock");
   if (h === "#/theory/review") return theoryRun("review");
@@ -394,3 +404,5 @@ function route(again) {
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-speak]"); if (b && !b.closest("#ov")) speak(b.dataset.speak); });
 addEventListener("hashchange", () => route());
 route();
+// 시작할 때 코드가 연결돼 있으면 다른 기기 기록과 합침(대시보드일 때만 다시 그림)
+if (syncCode()) pullMerge(S).then((m) => { S = { ...EMPTY(), ...m }; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* 무시 */ } if ((location.hash || "#/") === "#/") dashboard(); }).catch(() => undefined);
